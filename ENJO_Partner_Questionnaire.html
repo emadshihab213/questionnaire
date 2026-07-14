@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENJO — Partner Onboarding Questionnaire</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root { --navy:#0D2233; --teal:#306F7E; --cyan:#7FD6E7; --cream:#F6F8F7; --border:#D0DFE3; --muted:#5A8A96; }
+
+  body { font-family:'Montserrat',Arial,sans-serif; background:var(--cream); color:var(--navy); font-size:14px; line-height:1.6; }
+  body.ar { font-family:'Cairo',Arial,sans-serif; direction:rtl; }
+  body.en .lang-ar { display:none !important; }
+  body.ar .lang-en { display:none !important; }
+
+  /* HEADER */
+  .header { background:var(--navy); padding:22px 48px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .header-logo img { height:50px; width:auto; display:block; }
+  .header-right { display:flex; align-items:center; gap:18px; }
+  .header-title { text-align:right; }
+  body.ar .header-title { text-align:left; }
+  .header-title h1 { font-size:11px; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:2px; margin-bottom:2px; }
+  .header-title p { font-size:10px; color:rgba(246,248,247,0.45); }
+
+  /* LANG TOGGLE */
+  .lang-toggle { display:flex; background:rgba(255,255,255,0.1); border-radius:20px; padding:3px; gap:2px; }
+  .lang-toggle button { border:none; background:transparent; color:rgba(246,248,247,0.5); font-family:inherit; font-size:11px; font-weight:700; padding:5px 14px; border-radius:16px; cursor:pointer; transition:all 0.2s; letter-spacing:0.5px; }
+  .lang-toggle button.active { background:var(--teal); color:#fff; }
+
+  /* HERO */
+  .hero { background:var(--teal); padding:30px 48px; }
+  .hero h2 { font-size:21px; font-weight:800; color:#fff; margin-bottom:8px; }
+  .hero p { font-size:13px; color:rgba(246,248,247,0.80); max-width:640px; line-height:1.8; }
+
+  /* BODY */
+  .body { max-width:800px; margin:0 auto; padding:40px 48px 80px; }
+
+  /* NOTE BOX */
+  .note-box { background:rgba(48,111,126,0.07); border-left:3px solid var(--cyan); border-radius:0 8px 8px 0; padding:14px 18px; margin-bottom:36px; font-size:12px; color:#1E5564; line-height:1.8; }
+  body.ar .note-box { border-left:none; border-right:3px solid var(--cyan); border-radius:8px 0 0 8px; }
+  .note-box strong { color:var(--teal); }
+
+  /* SECTION */
+  .section { margin-bottom:48px; }
+  .section-header { display:flex; align-items:center; gap:12px; margin-bottom:26px; padding-bottom:12px; border-bottom:2px solid var(--teal); }
+  .section-num { background:var(--teal); color:#fff; width:29px; height:29px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .section-header h3 { font-size:13px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:1.2px; }
+  body.ar .section-header h3 { text-transform:none; letter-spacing:0; font-size:14px; }
+
+  /* QUESTION */
+  .question { margin-bottom:22px; }
+  .question label.qlabel { display:block; font-size:11px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; }
+  body.ar .question label.qlabel { text-transform:none; letter-spacing:0; font-size:13px; }
+  .hint { font-size:11px; color:var(--muted); font-style:italic; margin-bottom:8px; display:block; }
+  body.ar .hint { font-style:normal; font-size:12px; }
+  .optional-tag { display:inline-block; font-size:9px; font-weight:600; color:var(--muted); background:rgba(48,111,126,0.1); border-radius:10px; padding:1px 7px; margin-left:5px; text-transform:uppercase; letter-spacing:0.3px; vertical-align:middle; }
+  body.ar .optional-tag { font-size:10px; text-transform:none; margin-left:0; margin-right:5px; }
+
+  /* INPUTS */
+  .answer-line { width:100%; border:none; border-bottom:1.5px solid var(--border); background:transparent; padding:8px 0; font-family:inherit; font-size:13px; color:var(--navy); outline:none; transition:border-color 0.2s; }
+  .answer-line:focus { border-bottom-color:var(--teal); }
+  .answer-area { width:100%; border:1.5px solid var(--border); border-radius:8px; background:#fff; padding:10px 14px; font-family:inherit; font-size:13px; color:var(--navy); outline:none; resize:vertical; min-height:80px; transition:border-color 0.2s; }
+  .answer-area:focus { border-color:var(--teal); }
+
+  /* GRID */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:18px 36px; }
+
+  /* PILLS */
+  .pill-group { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .pill { display:flex; align-items:center; gap:7px; background:#fff; border:1.5px solid var(--border); border-radius:20px; padding:6px 14px; cursor:pointer; font-size:12px; font-weight:500; color:var(--navy); transition:border-color 0.2s; user-select:none; }
+  .pill:hover { border-color:var(--teal); }
+  .pill input { accent-color:var(--teal); width:13px; height:13px; flex-shrink:0; }
+
+  /* SUBMIT */
+  .submit-wrap { margin-top:48px; padding-top:32px; border-top:2px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .submit-note { font-size:11px; color:var(--muted); line-height:1.6; max-width:420px; }
+  .btn-submit { background:var(--teal); color:#fff; border:none; border-radius:10px; padding:14px 36px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; letter-spacing:0.3px; transition:background 0.2s, transform 0.1s; }
+  .btn-submit:hover { background:#255f6d; }
+  .btn-submit:active { transform:scale(0.98); }
+  body.ar .submit-wrap { flex-direction:row-reverse; }
+
+  /* SUCCESS */
+  .success-overlay { display:none; position:fixed; inset:0; background:rgba(13,34,51,0.85); z-index:999; align-items:center; justify-content:center; }
+  .success-overlay.show { display:flex; }
+  .success-card { background:#fff; border-radius:16px; padding:48px 40px; text-align:center; max-width:440px; width:90%; }
+  .success-icon { font-size:48px; margin-bottom:16px; }
+  .success-card h2 { font-size:20px; font-weight:800; color:var(--navy); margin-bottom:8px; }
+  .success-card p { font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:24px; }
+  .success-card .btn-close { background:var(--teal); color:#fff; border:none; border-radius:8px; padding:11px 28px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+
+  /* FOOTER */
+  .footer { background:var(--navy); padding:26px 48px; display:flex; justify-content:space-between; align-items:center; gap:20px; }
+  body.ar .footer { flex-direction:row-reverse; }
+  .footer-brand { font-size:12px; color:rgba(246,248,247,0.45); }
+  .footer-brand strong { color:var(--cyan); display:block; font-size:14px; font-weight:700; margin-bottom:2px; }
+  .footer-contact { text-align:right; font-size:11px; color:rgba(246,248,247,0.45); line-height:2; }
+  body.ar .footer-contact { text-align:left; }
+  .footer-contact a { color:var(--cyan); text-decoration:none; }
+
+  @media print {
+    .header,.hero,.footer,.section-num,.note-box,.pill,.btn-submit { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .lang-toggle,.submit-wrap { display:none; }
+  }
+</style>
+</head>
+<body class="en" id="root">
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <h2 class="lang-en">Thank you!</h2>
+    <h2 class="lang-ar">شكراً جزيلاً!</h2>
+    <p class="lang-en">Your responses have been submitted. The ENJO team will be in touch shortly to confirm our next meeting.</p>
+    <p class="lang-ar">تم إرسال إجاباتكم بنجاح. سيتواصل معكم فريق ENJO قريباً لتأكيد موعد اجتماعنا القادم.</p>
+    <button class="btn-close" onclick="document.getElementById('success-overlay').classList.remove('show')">
+      <span class="lang-en">Close</span><span class="lang-ar">إغلاق</span>
+    </button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADwCAYAAAA+VemSAAARXklEQVR42u3dW3BdV3kH8P+31trnIsu3+BKcOIkJDmEsbCcxIQQomiYMafLGNMczfaF9YNwpFBto2pQmztEhhMtwt4Am8ALDEzpTJi8t4VKoIE1DQcR2kCYXB2zXYGPHiixLOufsvdb6+qBLEseyZR1FOrL/v5mTZBSf7X2W9n+vb+291j4AERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERXTKETXDRtak2sX86D59ZeYhQSyqVSrZV92Om+3ZBn6FcNhd6wmqVNmJvQdP0LyrYvt1MHbBT/6w2velzbmHTJi0NdEi1uj2cO0A9trqpXzEwINO+V1UgMuOestTTY6v9Z2zzjH3DwICgpydeyHaJAZ630G7q6krckH7ROPc+9RlUYV7RytJ06XjewlhUADVJLotp4+F9ex782kQPCVQqcfPOB3a5XLIjZplTQKAqr31v4kOj/vD+7oe6US4bVCrx7B1v2VQqlbh5133vca7w+RjCCtX46m2+ZvcQxSXQLPuhq6//h75HdniGuXmOTdBkudrTY6siIfex8nvdkva/9/UajEsW6DwycUo2pnvzR8qPPl2pHAGAGz903zVqzVcAgVgHI9O8F4DNF/ds3rn7iacrlb5SqWSr1eprevTKxL8N7JdsPr9NazUY62awf4qkfembUzny7xD5YanUY89XMRAD/Lo63t8vABBjWB29D+p90AVs1+gBEZGQk2WTP/N5WWZUNaYNPVcpEIFgc3knwJcAdE77l0z0zKpa9I160OBVwysqjumLiBC9NzHG1QBwfFM/K8AmGTbBHDWksR6AVcBAZMFeImIAiFFMlb8T/y1y/vcmIW1EVyi+Z+tH7t9erVZDqafHTl8WSxSIxUw/8/jxZifaihjgVhoG60XRmwgg0XtVaz63bUe5rdrfr9NdK1Gd5TUUjex5GWB6fRIsJvosuHxxQ5aP96BSiZ3lMm/9MMC0eDIsNjQa0Vj7T9t2lq/u7eoKU1e0iQGmeajoQ2im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XrhRq2FsZAQnjhzBgX37kBQKyBcKeOutt+KNHR3IGo2Xe1HVqUUOOnHV+k+HDuGp3l7URkfRqNWmTgzGGK4fZoDpdQ+xMUisfdXTXodOnMCpkydhjJkKrarCWPvy1emJoI4OD+Pk0aMoLlmCXD4/vh1V9rwcA9N8ltMa49RVY5fLjfeeEyFUVST5PBpjY3BJMvWzyRLaJclUyDVGhpcBppYI9EQQ88UiDvb347HvfhdPP/EEXJJMLSVkb8sSmlpQjBHWORhr0ffTn+KZvj445/DbJ5/E8OAgbn7ve1FcsoSP12GAqRV7YJckqI+N4eePPopjhw4hXyyO98bO4fBzz2F4cBCd738/coUCe2AG+FJOyxm3kXSBv/JVFc45DB47hp9873sYPHYMhVc+yE4V+WIRwydP4j97erDmyivhkoQhZoAvTTL+bdtSHBy0pVJJnxXxC5tfhU0SHDt8GAKc9SmUk8sPG2NjOPzss7BJwmdhLRBexFrQsESoyEoA+lh3d6NarQYAl0+EQRZwx+CcG3+yxjRjXFWFTF6BZnjZA196Xa8Y9T6aJHfN1l0PfAtBvqUS3yPG3hUadZ3PtcDTBXQmQWd0GeBLOsTRZzC53Ac1hA8am0PMUrYLMcCLSUjTIFATQ4gCcP4hMcCLqiMG7MSqBoaXLggvYs1ZNSwcDs64sQzbij1wa4kxOAMEAeJsnws9F3T8ZCJRXj45R4ExClVVXeDVuXGyrXjEMMAtYW1HhwKAUfuicc5G5+xCLWJXHV9cELMUNsXw5M9zwZ4KVsTk86IhYqHW2KuqMc7BGPMiAKwd6GBP3Pzwi+bgyJRN27uS5Ir4BbG596nPoDK/wxOBKlTU5JIsNrKH93V/8usol8f3oVKJW3bt3mldbkfMMgdR0XmOsSiiOIuY+ceSxp/+se+RRzw47GCAWzHM6OpauHatVM5dvk+GemH2TQHeOqYWVSqVbKvuRyvvG7EHZpu+ogZY5PtHRERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERGfz/3wBk3DPkLpoAAAAAElFTkSuQmCC" alt="ENJO">
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="btn-ar" onclick="setLang('ar')">AR</button>
+    </div>
+    <div class="header-title">
+      <h1 class="lang-en">Partner Onboarding Questionnaire</h1>
+      <h1 class="lang-ar">استبيان إلحاق الشركاء</h1>
+      <p class="lang-en">Confidential · ENJO internal use only</p>
+      <p class="lang-ar">سري · للاستخدام الداخلي من قِبَل فريق ENJO</p>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h2 class="lang-en">Tell us about your business</h2>
+  <h2 class="lang-ar">حدّثنا عن نشاطك التجاري</h2>
+  <p class="lang-en">This questionnaire helps us prepare a detailed, productive commercial meeting. Your answers shape how we structure the partnership — from payment terms to how your experiences are showcased on the platform.</p>
+  <p class="lang-ar">يُساعدنا هذا الاستبيان على التحضير لاجتماع تجاري مُثمر. ستُحدد إجاباتك كيفية هيكلة الشراكة — من شروط الدفع إلى طريقة عرض تجاربك على المنصة.</p>
+</div>
+
+<!-- FORM -->
+<form id="partner-form">
+<input type="hidden" name="fvv" value="1">
+<input type="hidden" name="pageHistory" value="0">
+<input type="hidden" name="submissionTimestamp" value="-1">
+<input type="hidden" name="fbzx" id="fbzx" value="">
+<input type="hidden" name="partialResponse" id="partialResponse" value="">
+
+<div class="body">
+
+  <div class="note-box">
+    <span class="lang-en"><strong>How to use this form:</strong> Fill in as much detail as you can. All fields are optional. Everything remains strictly confidential and is used solely to tailor our partnership proposal.</span>
+    <span class="lang-ar"><strong>كيفية استخدام هذا الاستبيان:</strong> يُرجى تعبئة أكبر قدر ممكن من التفاصيل. جميع الحقول اختيارية. تبقى جميع المعلومات سرية تمامًا.</span>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h3 class="lang-en">Company Overview</h3>
+      <h3 class="lang-ar">نظرة عامة على الشركة</h3>
+    </div>
+    <div class="two-col">
+      <div class="question">
+        <label class="qlabel lang-en">Legal company name</label>
+        <label class="qlabel lang-ar">الاسم القانوني للشركة</label>
+        <input class="answer-line" type="text" name="entry.424059535" placeholder="Official registered name">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Trading / brand name</label>
+        <label class="qlabel lang-ar">اسم التداول / العلامة التجارية</label>
+        <input class="answer-line" type="text" name="entry.2147209378" placeholder="Name used with customers">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Year established</label>
+        <label class="qlabel lang-ar">سنة التأسيس</label>
+        <input class="answer-line" type="text" name="entry.558492125" placeholder="e.g. 2008">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Headquarters location</label>
+        <label class="qlabel lang-ar">موقع المقر الرئيسي</label>
+        <input class="answer-line" type="text" name="entry.457204576" placeholder="City, Jordan">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Primary contact name</label>
+        <label class="qlabel lang-ar">اسم جهة الاتصال الرئيسية</label>
+        <input class="answer-line" type="text" name="entry.439546907" placeholder="Full name">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Primary contact title</label>
+        <label class="qlabel lang-ar">المسمى الوظيفي</label>
+        <input class="answer-line" type="text" name="entry.786711216" placeholder="e.g. CEO, Operations Manager">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Primary contact email</label>
+        <label class="qlabel lang-ar">البريد الإلكتروني</label>
+        <input class="answer-line" type="email" name="entry.1056828773" placeholder="email@company.com">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Primary contact phone</label>
+        <label class="qlabel lang-ar">رقم الهاتف</label>
+        <input class="answer-line" type="tel" name="entry.1778174928" placeholder="+962 ...">
+      </div>
+    </div>
+    <div class="question" style="margin-top:6px">
+      <label class="qlabel lang-en">Brief company description</label>
+      <label class="qlabel lang-ar">وصف موجز للشركة</label>
+      <span class="hint lang-en">What you do, who you serve, what makes you stand out</span>
+      <span class="hint lang-ar">ما تقدمه، من تخدم، وما الذي يميزك</span>
+      <textarea class="answer-area" name="entry.666163864"></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h3 class="lang-en">Services &amp; Experiences</h3>
+      <h3 class="lang-ar">الخدمات والتجارب</h3>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">What categories best describe your offerings?</label>
+      <label class="qlabel lang-ar">ما الفئات التي تصف خدماتك بشكل أفضل؟</label>
+      <span class="hint lang-en">Select all that apply</span>
+      <span class="hint lang-ar">اختر ما ينطبق</span>
+      <div class="pill-group">
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Guided Tours / جولات إرشادية"> <span class="lang-en">Guided Tours</span><span class="lang-ar">جولات إرشادية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Adventure &amp; Outdoor / مغامرات وأنشطة خارجية"> <span class="lang-en">Adventure &amp; Outdoor</span><span class="lang-ar">مغامرات وأنشطة خارجية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Cultural Experiences / تجارب ثقافية"> <span class="lang-en">Cultural Experiences</span><span class="lang-ar">تجارب ثقافية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Water Sports / رياضات مائية"> <span class="lang-en">Water Sports</span><span class="lang-ar">رياضات مائية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Hiking &amp; Trekking / المشي والتنزه"> <span class="lang-en">Hiking &amp; Trekking</span><span class="lang-ar">المشي والتنزه</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Desert Camps / مخيمات صحراوية"> <span class="lang-en">Desert Camps</span><span class="lang-ar">مخيمات صحراوية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Wellness &amp; Spa / صحة وسبا"> <span class="lang-en">Wellness &amp; Spa</span><span class="lang-ar">صحة وسبا</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Dining Experiences / تجارب طعام"> <span class="lang-en">Dining Experiences</span><span class="lang-ar">تجارب طعام</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Private / Tailor-made / خاص ومصمم خصيصاً"> <span class="lang-en">Private / Tailor-made</span><span class="lang-ar">خاص / مُصمَّم خصيصًا</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Group Tours / جولات جماعية"> <span class="lang-en">Group Tours</span><span class="lang-ar">جولات جماعية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Day Trips / رحلات يومية"> <span class="lang-en">Day Trips</span><span class="lang-ar">رحلات يومية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Multi-day Packages / باقات متعددة الأيام"> <span class="lang-en">Multi-day Packages</span><span class="lang-ar">باقات متعددة الأيام</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Events / فعاليات"> <span class="lang-en">Events</span><span class="lang-ar">فعاليات</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1861808041" value="Other / أخرى"> <span class="lang-en">Other</span><span class="lang-ar">أخرى</span></label>
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Top 5 experiences or packages</label>
+      <label class="qlabel lang-ar">أبرز 5 تجارب أو باقات تقدمها</label>
+      <span class="hint lang-en">Name, duration, and price per person in JOD</span>
+      <span class="hint lang-ar">الاسم، المدة، والسعر للشخص الواحد بالدينار الأردني</span>
+      <textarea class="answer-area" name="entry.185650948" style="min-height:110px" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. "></textarea>
+    </div>
+    <div class="two-col">
+      <div class="question">
+        <label class="qlabel lang-en">Typical group size</label>
+        <label class="qlabel lang-ar">حجم المجموعة المعتاد</label>
+        <span class="hint lang-en">Min and max per booking</span>
+        <span class="hint lang-ar">الحد الأدنى والأقصى لكل حجز</span>
+        <input class="answer-line" type="text" name="entry.1272339479" placeholder="e.g. Min 2 / Max 15">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Price range per person (JOD)</label>
+        <label class="qlabel lang-ar">نطاق الأسعار للشخص الواحد (د.أ)</label>
+        <input class="answer-line" type="text" name="entry.1561898359" placeholder="e.g. JOD 25 – JOD 350">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Shortest available experience</label>
+        <label class="qlabel lang-ar">أقصر تجربة متاحة</label>
+        <input class="answer-line" type="text" name="entry.660707088" placeholder="e.g. 3-hour city tour">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Longest available package</label>
+        <label class="qlabel lang-ar">أطول باقة متاحة</label>
+        <input class="answer-line" type="text" name="entry.513266645" placeholder="e.g. 10-day Jordan tour">
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Do you offer private / tailor-made tours?</label>
+      <label class="qlabel lang-ar">هل تقدمون جولات خاصة أو مُصمَّمة خصيصًا؟</label>
+      <div class="pill-group">
+        <label class="pill"><input type="radio" name="entry.323221592" value="Yes — this is a core offering / نعم، خدمة أساسية"> <span class="lang-en">Yes — core offering</span><span class="lang-ar">نعم، خدمة أساسية</span></label>
+        <label class="pill"><input type="radio" name="entry.323221592" value="Yes — on request / نعم، عند الطلب"> <span class="lang-en">Yes — on request</span><span class="lang-ar">نعم، عند الطلب</span></label>
+        <label class="pill"><input type="radio" name="entry.323221592" value="No / لا"> <span class="lang-en">No</span><span class="lang-ar">لا</span></label>
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Destinations / regions covered</label>
+      <label class="qlabel lang-ar">الوجهات والمناطق المشمولة</label>
+      <span class="hint lang-en">e.g. Petra, Wadi Rum, Aqaba, Amman, Dead Sea, Jerash, Dana...</span>
+      <span class="hint lang-ar">مثال: البتراء، وادي رم، العقبة، عمّان، البحر الميت، جرش، ضانا...</span>
+      <textarea class="answer-area" name="entry.972434309"></textarea>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Exclusive or signature experiences</label>
+      <label class="qlabel lang-ar">تجارب حصرية أو مميزة</label>
+      <span class="hint lang-en">Anything unique not offered elsewhere</span>
+      <span class="hint lang-ar">أي شيء فريد لا يتوفر في أي مكان آخر</span>
+      <textarea class="answer-area" name="entry.268299750"></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h3 class="lang-en">Languages &amp; Team</h3>
+      <h3 class="lang-ar">اللغات والفريق</h3>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Languages your guides operate in</label>
+      <label class="qlabel lang-ar">اللغات التي يعمل بها مرشدوكم</label>
+      <div class="pill-group">
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="Arabic / العربية"> <span class="lang-en">Arabic</span><span class="lang-ar">العربية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="English / الإنجليزية"> <span class="lang-en">English</span><span class="lang-ar">الإنجليزية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="French / الفرنسية"> <span class="lang-en">French</span><span class="lang-ar">الفرنسية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="German / الألمانية"> <span class="lang-en">German</span><span class="lang-ar">الألمانية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="Spanish / الإسبانية"> <span class="lang-en">Spanish</span><span class="lang-ar">الإسبانية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="Italian / الإيطالية"> <span class="lang-en">Italian</span><span class="lang-ar">الإيطالية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="Russian / الروسية"> <span class="lang-en">Russian</span><span class="lang-ar">الروسية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="Chinese / الصينية"> <span class="lang-en">Chinese</span><span class="lang-ar">الصينية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="Portuguese / البرتغالية"> <span class="lang-en">Portuguese</span><span class="lang-ar">البرتغالية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1412957320" value="Other / أخرى"> <span class="lang-en">Other</span><span class="lang-ar">أخرى</span></label>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="question">
+        <label class="qlabel lang-en">Full-time guides</label>
+        <label class="qlabel lang-ar">المرشدون بدوام كامل</label>
+        <input class="answer-line" type="text" name="entry.1558157356" placeholder="e.g. 12">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Freelance / seasonal guides</label>
+        <label class="qlabel lang-ar">المرشدون المستقلون / الموسميون</label>
+        <input class="answer-line" type="text" name="entry.2097688572" placeholder="e.g. 20–30 in peak season">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Total team size</label>
+        <label class="qlabel lang-ar">الحجم الإجمالي للفريق</label>
+        <input class="answer-line" type="text" name="entry.573818174" placeholder="e.g. 25">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Official JITOA / MOT licences?</label>
+        <label class="qlabel lang-ar">تراخيص رسمية من جمعية وكالات السياحة / وزارة السياحة؟</label>
+        <div class="pill-group" style="margin-top:8px">
+          <label class="pill"><input type="radio" name="entry.211489777" value="Yes, all / نعم جميعهم"> <span class="lang-en">Yes, all</span><span class="lang-ar">نعم، جميعهم</span></label>
+          <label class="pill"><input type="radio" name="entry.211489777" value="Some / بعضهم"> <span class="lang-en">Some</span><span class="lang-ar">بعضهم</span></label>
+          <label class="pill"><input type="radio" name="entry.211489777" value="No / لا"> <span class="lang-en">No</span><span class="lang-ar">لا</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h3 class="lang-en">Source Markets &amp; Current Partners</h3>
+      <h3 class="lang-ar">الأسواق المصدر والشركاء الحاليون</h3>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Main source markets today</label>
+      <label class="qlabel lang-ar">الأسواق المصدر الرئيسية حالياً</label>
+      <span class="hint lang-en">List by volume — top markets first</span>
+      <span class="hint lang-ar">رتّبها تنازلياً من حيث الحجم</span>
+      <textarea class="answer-area" name="entry.1897345394" placeholder="e.g. 1. GCC (Bahrain, Qatar)  2. Europe  3. USA..."></textarea>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Platforms and partners you currently work with</label>
+      <label class="qlabel lang-ar">المنصات والشركاء الذين تعمل معهم حالياً</label>
+      <div class="pill-group">
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Evaneos"> Evaneos</label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="TripAdvisor / Viator"> TripAdvisor / Viator</label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="GetYourGuide"> GetYourGuide</label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Lonely Planet Experiences"> Lonely Planet Experiences</label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Booking.com"> Booking.com</label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Airbnb Experiences"> Airbnb Experiences</label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Regional DMC offices / مكاتب DMC إقليمية"> <span class="lang-en">Regional DMC offices</span><span class="lang-ar">مكاتب DMC إقليمية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Direct B2B (hotels, agents) / B2B مباشر"> <span class="lang-en">Direct B2B</span><span class="lang-ar">B2B مباشر</span></label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Direct website / موقع مباشر"> <span class="lang-en">Direct website</span><span class="lang-ar">موقع مباشر</span></label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="WhatsApp / Social media"> WhatsApp / Social media</label>
+        <label class="pill"><input type="checkbox" name="entry.295718087" value="Other / أخرى"> <span class="lang-en">Other</span><span class="lang-ar">أخرى</span></label>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="question">
+        <label class="qlabel lang-en">Avg commission paid to platforms <span class="optional-tag lang-en">Optional</span></label>
+        <label class="qlabel lang-ar">متوسط العمولة المدفوعة للمنصات <span class="optional-tag lang-ar">اختياري</span></label>
+        <input class="answer-line" type="text" name="entry.68068704" placeholder="e.g. 25–30%">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Avg payment settlement timeline <span class="optional-tag lang-en">Optional</span></label>
+        <label class="qlabel lang-ar">متوسط مدة تسوية الدفع <span class="optional-tag lang-ar">اختياري</span></label>
+        <input class="answer-line" type="text" name="entry.1669637113" placeholder="e.g. 30–45 days after tour">
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">% of bookings from Jordanian locals or diaspora</label>
+      <label class="qlabel lang-ar">نسبة الحجوزات من الأردنيين المحليين أو المغتربين</label>
+      <div class="pill-group">
+        <label class="pill"><input type="radio" name="entry.287980481" value="Less than 10% / أقل من 10%"> <span class="lang-en">&lt;10%</span><span class="lang-ar">أقل من 10%</span></label>
+        <label class="pill"><input type="radio" name="entry.287980481" value="10–25%"> 10–25%</label>
+        <label class="pill"><input type="radio" name="entry.287980481" value="25–50%"> 25–50%</label>
+        <label class="pill"><input type="radio" name="entry.287980481" value="More than 50% / أكثر من 50%"> <span class="lang-en">&gt;50%</span><span class="lang-ar">أكثر من 50%</span></label>
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Peak and off-peak seasons</label>
+      <label class="qlabel lang-ar">موسم الذروة وخارج الذروة</label>
+      <div class="two-col">
+        <input class="answer-line" type="text" name="entry.503873672" placeholder="Peak: e.g. March–May, Sep–Nov">
+        <input class="answer-line" type="text" name="entry.1511384374" placeholder="Off-peak: e.g. July–Aug">
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h3 class="lang-en">Operations &amp; Booking</h3>
+      <h3 class="lang-ar">العمليات والحجوزات</h3>
+    </div>
+    <div class="two-col">
+      <div class="question">
+        <label class="qlabel lang-en">Minimum booking lead time</label>
+        <label class="qlabel lang-ar">الحد الأدنى للإشعار قبل الحجز</label>
+        <input class="answer-line" type="text" name="entry.477599522" placeholder="e.g. 24 hours, 1 week">
+      </div>
+      <div class="question">
+        <label class="qlabel lang-en">Max capacity per day</label>
+        <label class="qlabel lang-ar">الطاقة الاستيعابية القصوى يومياً</label>
+        <input class="answer-line" type="text" name="entry.970115935" placeholder="e.g. 80 guests/day">
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">How do you currently manage bookings?</label>
+      <label class="qlabel lang-ar">كيف تديرون حجوزاتكم حالياً؟</label>
+      <div class="pill-group">
+        <label class="pill"><input type="checkbox" name="entry.332359313" value="Manual — phone, WhatsApp, email / يدوياً"> <span class="lang-en">Manual (phone, WhatsApp, email)</span><span class="lang-ar">يدوياً</span></label>
+        <label class="pill"><input type="checkbox" name="entry.332359313" value="Spreadsheets / جداول بيانات"> <span class="lang-en">Spreadsheets</span><span class="lang-ar">جداول بيانات</span></label>
+        <label class="pill"><input type="checkbox" name="entry.332359313" value="Booking software / CRM"> Booking software / CRM</label>
+        <label class="pill"><input type="checkbox" name="entry.332359313" value="Own website booking engine / محرك حجز على موقعنا"> <span class="lang-en">Own website booking engine</span><span class="lang-ar">محرك حجز على موقعنا</span></label>
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">If using booking software, which one?</label>
+      <label class="qlabel lang-ar">إذا كنتم تستخدمون برنامج حجز، فأيّه؟</label>
+      <input class="answer-line" type="text" name="entry.270191599" placeholder="e.g. Rezdy, FareHarbor, Bokun...">
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Cancellation policy</label>
+      <label class="qlabel lang-ar">سياسة الإلغاء</label>
+      <span class="hint lang-en">Full refund window, partial refund conditions, no-refund threshold</span>
+      <span class="hint lang-ar">نافذة الاسترداد الكامل، شروط الاسترداد الجزئي، عتبة عدم الاسترداد</span>
+      <textarea class="answer-area" name="entry.496529263"></textarea>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Deposit required at booking?</label>
+      <label class="qlabel lang-ar">هل تشترطون دفعة أولى عند الحجز؟</label>
+      <div class="pill-group">
+        <label class="pill"><input type="radio" name="entry.70636523" value="No deposit / لا دفعة أولى"> <span class="lang-en">No deposit</span><span class="lang-ar">لا دفعة أولى</span></label>
+        <label class="pill"><input type="radio" name="entry.70636523" value="Partial deposit / دفعة أولى جزئية"> <span class="lang-en">Partial deposit</span><span class="lang-ar">دفعة أولى جزئية</span></label>
+        <label class="pill"><input type="radio" name="entry.70636523" value="Full payment at booking / الدفع الكامل عند الحجز"> <span class="lang-en">Full payment at booking</span><span class="lang-ar">الدفع الكامل عند الحجز</span></label>
+      </div>
+      <input class="answer-line" type="text" name="entry.572604457" style="margin-top:10px; max-width:280px" placeholder="If partial, specify %">
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h3 class="lang-en">Content &amp; Digital Readiness</h3>
+      <h3 class="lang-ar">المحتوى والجاهزية الرقمية</h3>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Professional photos of your experiences?</label>
+      <label class="qlabel lang-ar">هل لديكم صور احترافية لتجاربكم؟</label>
+      <div class="pill-group">
+        <label class="pill"><input type="radio" name="entry.580958251" value="Yes — high-res library / نعم، مكتبة بدقة عالية"> <span class="lang-en">Yes — high-res library</span><span class="lang-ar">نعم، مكتبة بدقة عالية</span></label>
+        <label class="pill"><input type="radio" name="entry.580958251" value="Some — partial coverage / بعضها"> <span class="lang-en">Some — partial coverage</span><span class="lang-ar">بعضها</span></label>
+        <label class="pill"><input type="radio" name="entry.580958251" value="No — need to arrange / لا"> <span class="lang-en">No — need to arrange</span><span class="lang-ar">لا، نحتاج إلى ترتيب ذلك</span></label>
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Experience descriptions in multiple languages?</label>
+      <label class="qlabel lang-ar">هل الأوصاف متاحة بلغات متعددة؟</label>
+      <div class="pill-group">
+        <label class="pill"><input type="checkbox" name="entry.1344963613" value="Arabic / العربية"> <span class="lang-en">Arabic</span><span class="lang-ar">العربية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1344963613" value="English / الإنجليزية"> <span class="lang-en">English</span><span class="lang-ar">الإنجليزية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1344963613" value="French / الفرنسية"> <span class="lang-en">French</span><span class="lang-ar">الفرنسية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1344963613" value="German / الألمانية"> <span class="lang-en">German</span><span class="lang-ar">الألمانية</span></label>
+        <label class="pill"><input type="checkbox" name="entry.1344963613" value="Other / أخرى"> <span class="lang-en">Other</span><span class="lang-ar">أخرى</span></label>
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Video content for any experiences?</label>
+      <label class="qlabel lang-ar">هل لديكم محتوى مرئي لأي من تجاربكم؟</label>
+      <div class="pill-group">
+        <label class="pill"><input type="radio" name="entry.1621592309" value="Yes / نعم"> <span class="lang-en">Yes</span><span class="lang-ar">نعم</span></label>
+        <label class="pill"><input type="radio" name="entry.1621592309" value="No / لا"> <span class="lang-en">No</span><span class="lang-ar">لا</span></label>
+        <label class="pill"><input type="radio" name="entry.1621592309" value="In progress / قيد الإنجاز"> <span class="lang-en">In progress</span><span class="lang-ar">قيد الإنجاز</span></label>
+      </div>
+    </div>
+    <div class="question">
+      <label class="qlabel lang-en">Additional notes or questions for ENJO</label>
+      <label class="qlabel lang-ar">ملاحظات أو أسئلة إضافية لـ ENJO</label>
+      <textarea class="answer-area" name="entry.1284978400" style="min-height:90px"></textarea>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap">
+    <p class="submit-note lang-en">Your responses are submitted securely and go directly to the ENJO partnerships team. All information is strictly confidential.</p>
+    <p class="submit-note lang-ar">تُرسَل إجاباتكم بشكل آمن مباشرةً إلى فريق الشراكات في ENJO. جميع المعلومات سرية تمامًا.</p>
+    <button type="submit" class="btn-submit">
+      <span class="lang-en">Submit Questionnaire</span>
+      <span class="lang-ar">إرسال الاستبيان</span>
+    </button>
+  </div>
+
+</div>
+</form>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-brand">
+    <strong>ENJO · إنجو</strong>
+    <span class="lang-en">Jordan's All-in-One Platform for Tourism, Adventures, Entertainment &amp; Events</span>
+    <span class="lang-ar">منصة الأردن الشاملة للسياحة والمغامرات والترفيه والفعاليات</span>
+  </div>
+  <div class="footer-contact">
+    <a href="mailto:emad@enjoapp.com">emad@enjoapp.com</a><br>
+    <a href="https://enjoapp.com">enjoapp.com</a><br>
+    <span style="color:rgba(246,248,247,0.25); font-size:10px" class="lang-en">Confidential — Not for distribution</span>
+    <span style="color:rgba(246,248,247,0.25); font-size:10px" class="lang-ar">سري — غير مخصص للتوزيع</span>
+  </div>
+</div>
+
+<script>
+function setLang(lang) {
+  document.getElementById('root').lang = lang;
+  document.getElementById('root').dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.body.className = lang;
+  document.getElementById('btn-en').className = lang === 'en' ? 'active' : '';
+  document.getElementById('btn-ar').className = lang === 'ar' ? 'active' : '';
+  document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(el => {
+    el.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  });
+}
+setLang('en');
+
+document.getElementById('partner-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  // Generate a random fbzx session ID (matches Google Forms format)
+  const fbzx = (Math.floor(Math.random() * 9e18) - 4.5e18).toFixed(0);
+  document.getElementById('fbzx').value = fbzx;
+  document.getElementById('partialResponse').value = '[null,null,"' + fbzx + '"]';
+
+  const btn = document.querySelector('.btn-submit');
+  const origHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="lang-en">Submitting…</span><span class="lang-ar">جارٍ الإرسال…</span>';
+  // re-apply lang visibility after innerHTML change
+  document.querySelectorAll('.btn-submit .lang-en, .btn-submit .lang-ar').forEach(el => {
+    const cls = el.className.replace('lang-', '');
+    el.style.display = document.body.className === cls ? '' : 'none';
+  });
+
+  try {
+    // Build URLSearchParams (Google Forms requires application/x-www-form-urlencoded)
+    const params = new URLSearchParams();
+    new FormData(this).forEach((val, key) => params.append(key, val));
+
+    await fetch('https://docs.google.com/forms/u/0/d/e/1FAIpQLScsxpfs4RKVwsHzimNzj0xXjxaXaMSIGjxcyil3as4Xv7qcJA/formResponse', {
+      method: 'POST',
+      body: params,
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+    document.getElementById('success-overlay').classList.add('show');
+    this.reset();
+  } catch(err) {
+    alert('Submission failed. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origHTML;
+    setLang(document.body.className);
+  }
+});
+</script>
+</body>
+</html>
